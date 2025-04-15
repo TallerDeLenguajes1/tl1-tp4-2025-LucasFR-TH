@@ -44,8 +44,15 @@ int main() {
         i++;
         printf("Numero de tarea registrada: %d\n", T->T.TareaID);
         printf("Ingrese la descripcion de la tarea:\n");
-        getchar(); // limpio el ingreos de datos
-        gets(T->T.Descripcion);
+
+        getchar(); // NECESDARIO PARA PODER INGRESAR CORECATEMENTE LOS VALORES
+        char *Buff; // variable auxiliar 
+        Buff= (char *) malloc(100*sizeof(char)); 
+        gets(Buff); // Lee el nombre del cliente
+        T->T.Descripcion = (char *) malloc((strlen(Buff)+1)*sizeof(char)); // Reserva memoria para el nombre del cliente
+        strcpy(T->T.Descripcion, Buff); // Copia el nombre del cliente a la estructura
+        free(Buff); // Libera la memoria auxiliar
+        
         printf("Ingrese la duracio de la tareas: (10 - 100)\n");
         scanf("%d", T->T.Duracion);
         T->Siguiente = NULL;
@@ -93,16 +100,19 @@ void InsertarNodo(Nodos ** Tareas , Nodos *Nodo)
     *Tareas = Nodo ;
 }
 
-/*void MostrarListas(Nodos **Tareas) {
+void MostrarListas(Nodos ** Tareas) {
     Nodos * aux = *Tareas;
     if (aux) {
         while (aux->Siguiente) {
-            printf("ID %d\n", Tareas->T.TareaID);
-
+            printf("ID %d\n", aux->T.TareaID);
+            printf("Descripcion: %s\n", aux->T.Descripcion);
+            printf("Duracion: %s\n", aux->T.Duracion);
+            printf("\n");
+            aux = aux -> Siguiente;
         }
     }
     
-}*/
+}
 
 void EliminarNodo(Nodos * nodo)
 {
