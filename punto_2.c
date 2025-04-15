@@ -16,7 +16,12 @@ typedef struct Nodo{
 
 // DECLARACION DE MODULOS
 Nodos * CrearListaVacia();
-void InsertarNodo(Nodos ** Start , Nodos *Nodo);
+void InsertarNodo(Nodos ** Tareas , Nodos *Nodo);
+void MostrarListas(Nodos **Tareas);
+void EliminarNodo(Nodos * nodo);
+Nodos * QuitarNodo(Nodos * Tareas, int dato);
+Nodos *BuscarNodo (Nodos **Tarea, int realizada);
+
 
 int main() {
     // DEFINO LAS DOS LISTAS DE TAREAS CON EL TIPO DE ESTRUCTURA DE LISTAS
@@ -31,10 +36,49 @@ int main() {
     printf("¿Desea ingresar una tarea?(Y/N)");
     char confirmacion;
     scanf("%c", &confirmacion);
-    if (confirmacion == "Y") {
-        Nodos * T1 = (Nodos *)malloc(sizeof(Nodos));
-        
+    int i = 1;
+
+    while (confirmacion == "Y") {
+        Nodos * T = (Nodos *)malloc(sizeof(Nodos));
+        T->T.TareaID = i + 1000;
+        i++;
+        printf("Numero de tarea registrada: %d\n", T->T.TareaID);
+        printf("Ingrese la descripcion de la tarea:\n");
+        getchar(); // limpio el ingreos de datos
+        gets(T->T.Descripcion);
+        printf("Ingrese la duracio de la tareas: (10 - 100)\n");
+        scanf("%d", T->T.Duracion);
+        T->Siguiente = NULL;
+
+        InsertarNodo(TareasPendientes ,T);
+
+        printf("¿Desea ingresar una tarea?(Y/N)");
+        scanf("%c", &confirmacion);
     }
+
+    printf("Termino el registro de tareas...\n");
+    printf("\n");
+
+    /*printf("Las tareas registradas son las siguientes:\n");
+    MostrarListas(TareasPendientes);*/
+
+    char cambioRealizadas;
+    printf("Quiere marcar tareas como completas? (Y/N)\n");
+    scanf("%c", cambioRealizadas);
+    while (cambioRealizadas == "Y") {
+        printf("Ingrese el numero identificador de la tarea que desea marcar como realizada:\n");
+        int realizada;
+        scanf("%d", &realizada);
+        // SACO EL NODO A PASAR DE LA LISTA DE PENDIENTES
+        Nodos *tareaPasar = buscarNodo(TareasPendientes, realizada);
+        // INSERTO EL NODO EN LA LISTA DE REALIZADAS
+        InsertarNodo(TareasRealizadas, tareaPasar);
+        // OCNSULTO POR OTRO MODIFICAION
+        printf("Quiere seguir marcando tareas como completas? (Y/N)\n");
+        scanf("%c", cambioRealizadas);
+    }
+
+
 }
 
 // DEFINICION DE MODULOS
@@ -43,8 +87,57 @@ Nodos * CrearListaVacia()
     return NULL;
 }
 
-void InsertarNodo(Nodos ** Start , Nodos *Nodo)
+void InsertarNodo(Nodos ** Tareas , Nodos *Nodo)
 {
-    Nodo -> Siguiente = *Start;
-    *Start = Nodo ;
+    Nodo -> Siguiente = *Tareas;
+    *Tareas = Nodo ;
 }
+
+/*void MostrarListas(Nodos **Tareas) {
+    Nodos * aux = *Tareas;
+    if (aux) {
+        while (aux->Siguiente) {
+            printf("ID %d\n", Tareas->T.TareaID);
+
+        }
+    }
+    
+}*/
+
+void EliminarNodo(Nodos * nodo)
+{
+    if (nodo) free(nodo);
+}
+
+Nodos * QuitarNodo(Nodos * Tareas, int dato)
+{
+    Nodos ** aux = Tareas;
+    while (*aux != NULL && (*aux)->T.TareaID != dato) {
+        aux = &(*aux)->Siguiente;
+    }
+    if (*aux) {
+        Nodos *temp = *aux;
+        *aux = (*aux)->Siguiente;
+        temp->Siguiente = NULL;
+        return(temp);
+    } else {
+        return NULL; 
+    }
+    
+}
+
+Nodos * buscarNodo(Nodos * Tareas, int dato)
+{
+    Nodos * Aux = Tareas;
+    while(Aux && Aux->T.TareaID != dato)
+    {
+        Aux = Aux -> Siguiente;
+    }
+    if(Aux) {
+        Nodos * temp = QuitarNodo(Tareas, dato);
+        return temp;
+    } else {
+        return NULL;
+    }
+}
+
