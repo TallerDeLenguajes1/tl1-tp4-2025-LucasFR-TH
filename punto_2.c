@@ -42,32 +42,32 @@ int main() {
 
     do {
         printf("Desea ingresar una tarea? (Y/N): ");
-        scanf("%c", &confirmacion);
-        if (confirmacion == 'Y') {
+        scanf(" %c", &confirmacion);  // agregue un espacio antes del %c para ignorar \n
+    
+        if (confirmacion == 'Y' || confirmacion == 'y') {
             Nodo *nuevo = (Nodo *)malloc(sizeof(Nodo));
             nuevo->T.TareaID = 1000 + i;
             i++;
             printf("Numero de tarea registrada: %d\n", nuevo->T.TareaID);
-
+    
+            // Descripción
             printf("Ingrese la descripcion de la tarea:\n");
-            getchar(); // NECESDARIO PARA PODER INGRESAR CORECATEMENTE LOS VALORES
-            char *Buff; // variable auxiliar 
-            Buff= (char *) malloc(300*sizeof(char)); 
-            gets(Buff); // Lee el nombre del cliente
-            nuevo->T.Descripcion = (char *) malloc((strlen(Buff)+1)*sizeof(char)); // Reserva memoria para el nombre del cliente
-            strcpy(nuevo->T.Descripcion, Buff); // Copia el nombre del cliente a la estructura
-            free(Buff); // Libera la memoria auxiliar
-
+            getchar(); // Limpia el \n pendiente antes de gets/fgets
+            char *Buff = (char *)malloc(300 * sizeof(char));
+            gets(Buff);
+            nuevo->T.Descripcion = (char *)malloc(strlen(Buff) + 1);
+            strcpy(nuevo->T.Descripcion, Buff);
+            free(Buff);
+    
+            // Duración
             printf("Ingrese la duracion de la tarea (10 - 100):\n");
-            scanf("%d", nuevo->T.Duracion);
+            scanf("%d", &nuevo->T.Duracion);
+    
             nuevo->Siguiente = NULL;
-
+    
             InsertarNodo(&TareasPendientes, nuevo);
-
-            printf("Desea ingresar una tarea?(Y/N)");
-            scanf("%c", &confirmacion);
         }
-    } while (confirmacion == 'Y');
+    } while (confirmacion == 'Y' || confirmacion == 'y');
 
     printf("Termino el registro de tareas...\n");
     printf("\n");
@@ -80,7 +80,7 @@ int main() {
 
     char cambioRealizadas;
     do {
-        printf("¿Desea marcar una tarea como realizada? (Y/N): ");
+        printf("Desea marcar una tarea como realizada? (Y/N): ");
         getchar(); // limpia buffer
         scanf("%c", &cambioRealizadas);
         if (cambioRealizadas == 'Y') {
@@ -95,7 +95,13 @@ int main() {
     } while (cambioRealizadas == 'Y');
 
     // Mostrar listas
+    printf("\n");
+    printf("|||||||||TAREAS PENDIENTES|||||||||\n");
+    printf("\n");
     MostrarListas(&TareasPendientes);
+    printf("\n");
+    printf("|||||||||TAREAS REALIZADAS|||||||||\n");
+    printf("\n");
     MostrarListas(&TareasRealizadas);
 
     // Consulta por ID o palabra clave
@@ -118,7 +124,7 @@ int main() {
     // LIMPIO MEMORIA
     LiberarLista(TareasPendientes);
     LiberarLista(TareasRealizadas);
-    
+
     return 0;
 }
 
@@ -137,7 +143,7 @@ void InsertarNodo(Nodo **Tareas , Nodo *Nodo)
 void MostrarListas(Nodo **Tareas) {
     Nodo *aux = *Tareas;
     if (aux) {
-        while (aux->Siguiente) {
+        while (aux != NULL) {
             printf("ID %d\n", aux->T.TareaID);
             printf("Descripcion: %s\n", aux->T.Descripcion);
             printf("Duracion: %d\n", aux->T.Duracion);
@@ -203,7 +209,7 @@ void BuscarTareaPorIDoPalabra(Nodo *pendientes, Nodo *realizadas, int id, const 
         for (aux = pendientes; aux != NULL; aux = aux->Siguiente) {
             if (aux->T.TareaID == id) {
                 printf("\nTarea encontrada en PENDIENTES:\n");
-                printf("ID: %d\nDescripción: %s\nDuración: %d\n", aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+                printf("ID: %d\nDescripcion: %s\nDuracion: %d\n", aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
                 encontrada = 1;
                 break;
             }
@@ -212,7 +218,7 @@ void BuscarTareaPorIDoPalabra(Nodo *pendientes, Nodo *realizadas, int id, const 
         for (aux = realizadas; aux != NULL && !encontrada; aux = aux->Siguiente) {
             if (aux->T.TareaID == id) {
                 printf("\nTarea encontrada en REALIZADAS:\n");
-                printf("ID: %d\nDescripción: %s\nDuración: %d\n", aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+                printf("ID: %d\nDescripcion: %s\nDuracion: %d\n", aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
                 encontrada = 1;
                 break;
             }
